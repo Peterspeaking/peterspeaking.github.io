@@ -1,19 +1,32 @@
 body{
-        background-color: #e5fdfb;
+    background-color: #e5fdfb;
+    background-image: url("Images/Background.gif");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
-header
+.resources
 {
-    text-align: center;
+    text-align: left;
 }
 
-.intro {
+.CenterDiv {
     text-align: center;
     height: auto;
     width: auto;
-  }
+ }
 
-  .bubble {
+ .FaceWrap{
+    display: inline-block;
+    border-radius: 100%;
+}
+
+.FaceWrap:hover .SpeechBubble {
+    opacity: 1;
+}
+
+.SpeechBubble {
     position: relative;
     background: #c06ea2;
     color: #FFFFFF;
@@ -31,13 +44,19 @@ header
     margin-right: auto;
 }
 
-.intro:hover .bubble {
-    opacity: 1;
-  }
+.AudioDiv {
+    margin-top: 400px;
+    text-align: center;
+    height: auto;
+    width: auto;
+ }
 
-  .resources
-  {
-      text-align: right;
-      
-  }
+ .PlayButton{
+     background: none;
+     border: none;
+ }
 
+ .PauseButton{
+    background: none;
+    border: none;
+}
