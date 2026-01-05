@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CYB 301 IPv4 Subnetting Helper (Wall Method)</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f172a; --card2:#0f172a; --text:#e6eefc; --muted:#a7b4d6;
+      --accent:#7dd3fc; --good:#86efac; --warn:#fbbf24; --bad:#fb7185; --wall:#ff5a5f;
+      --border:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:28px 18px 10px;
+      max-width:1100px; margin:0 auto;
+    }
+    h1{margin:0 0 6px; font-size:clamp(20px,3vw,34px); letter-spacing:.2px}
+    p.lead{margin:0; color:var(--muted); line-height:1.5; max-width:78ch}
+
+    main{max-width:1100px; margin:0 auto; padding:18px; display:grid; gap:14px}
+
+    .grid{display:grid; gap:14px}
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.15fr .85fr}
+    }
+
+    .card{
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:16px;
+      box-shadow: none;
+    }
+    .card h2{margin:0 0 10px; font-size:18px}
+    .muted{color:var(--muted)}
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .row > *{flex:0 0 auto}
+
+    label{font-size:12px; color:var(--muted)}
+    input[type="text"], input[type="number"]{
+      background: rgba(15,23,42,.7);
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:10px;
+      padding:10px 12px;
+      outline:none;
+      min-width:220px;
+    }
+    input[type="number"]{min-width:120px}
+
+    button{
+      border:1px solid var(--border);
+      background: rgba(125,211,252,.12);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      transition: transform .06s ease, background .2s ease;
+      font-weight:600;
+    }
+    button:hover{background: rgba(125,211,252,.18)}
+    button:active{transform: translateY(1px)}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    .kpi{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; margin-top:12px}
+    @media (min-width: 600px){.kpi{grid-template-columns: repeat(3, minmax(0,1fr));}}
+    .k{
+      background: rgba(15,23,42,.55);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+    }
+    .k .t{font-size:11px; color:var(--muted)}
+    .k .v{font-size:16px; margin-top:4px; font-weight:700; letter-spacing:.2px}
+
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    .bits{
+      display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+      background: rgba(15,23,42,.55);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:10px;
+      margin-top:10px;
+    }
+    .bit{
+      width:24px; height:28px;
+      border-radius:9px;
+      display:grid; place-items:center;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size:13px;
+    }
+    .sep{width:10px; height:28px; display:grid; place-items:center; color:rgba(255,255,255,.35)}
+    .wall{border-color: rgba(255,90,95,.9); background: rgba(255,90,95,.15)}
+    .net{background: rgba(134,239,172,.12)}
+    .host{background: rgba(251,191,36,.12)}
+
+    .wallSep{
+      width:18px;
+      height:28px;
+      display:grid;
+      place-items:center;
+      border-radius:9px;
+      border:1px solid rgba(255,90,95,.85);
+      background: rgba(255,90,95,.18);
+      color: rgba(255,255,255,.92);
+      font-weight:800;
+    }
+    .wallText{color:var(--wall); font-weight:800}
+
+    .steps{margin-top:10px; padding-left:18px}
+    .steps li{margin:10px 0}
+    .steps .line{margin-top:6px; display:block}
+    .steps .hint{color:var(--muted); font-size:12px; margin-top:4px}
+
+    .practice{margin-top:10px; padding-left:18px}
+    .practice li{margin:12px 0}
+    .practice .prompt{display:block; margin-top:4px}
+    .practice .inputs{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:8px}
+    .practice .inputs input[type="text"], .practice .inputs input[type="number"]{min-width:220px}
+    .practice .mini{min-width:120px}
+    .practice .wide{min-width:320px}
+
+    .toggleRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px}
+    .toggle{display:inline-flex; align-items:center; gap:8px; color:var(--muted); font-size:12px}
+    .toggle input{transform: translateY(1px)}
+
+    .callout{
+      border-left: 4px solid rgba(125,211,252,.9);
+      padding:10px 12px;
+      background: rgba(125,211,252,.08);
+      border-radius:12px;
+      margin-top:10px;
+    }
+
+    details{border:1px solid var(--border); border-radius:14px; padding:10px; background: rgba(15,23,42,.35)}
+    details summary{cursor:pointer; font-weight:700}
+    details p{color:var(--muted); line-height:1.6}
+
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid var(--border)}
+    th, td{padding:10px; text-align:left; font-size:13px; border-bottom:1px solid rgba(255,255,255,.08)}
+    th{background: rgba(255,255,255,.06); color: var(--muted); font-weight:700}
+    tr:last-child td{border-bottom:none}
+
+    .small{font-size:12px}
+    .good{color:var(--good)}
+    .warn{color:var(--warn)}
+    .bad{color:var(--bad)}
+
+    .badge{display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid var(--border); background: rgba(255,255,255,.04); font-size:12px; color:var(--muted)}
+
+    .statusLine{margin-top:6px}
+
+    .footer{padding:10px 18px 30px; max-width:1100px; margin:0 auto; color:var(--muted); font-size:12px}
+    a{color:var(--accent)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>IPv4 Subnetting Helper “Wall” Method</h1>
+    <p class="lead">Step-by-step like the whiteboard: convert to binary → build the subnet mask (prefix = 1s) → mark the <span class="badge">wall</span> → flip host bits for Network ID / Broadcast → use host bits for totals → add the block size for Next Subnet.</p>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Try it</h2>
+      <div class="row" style="margin-bottom:8px">
+        <div>
+          <label for="ip">IPv4 Address</label><br>
+          <input id="ip" type="text" value="192.168.1.75" placeholder="e.g., 192.168.1.75" />
+        </div>
+        <div>
+          <label for="prefix">Prefix</label><br>
+          <input id="prefix" type="number" value="26" min="0" max="32" />
+        </div>
+        <div style="align-self:end">
+          <button id="btn">Analyze</button>
+        </div>
+        <div class="pill" title="Net bits are before the wall, host bits are after the wall.">
+          <span class="mono wallText">|</span>
+          <span>Wall = split (network | host)</span>
+        </div>
+      </div>
+
+      <div>
+
+        <div class="callout small">
+          <div><strong>Bit weights (per octet):</strong> <span class="mono">128 64 32 16 8 4 2 1</span></div>
+          <div class="muted">Each IPv4 address has 4 octets × 8 bits = 32 bits total.</div>
+        </div>
+
+        <div class="toggleRow">
+          <div class="pill"><strong>Working on:</strong> <span id="checkTargetHelper" class="mono">—</span></div>
+        </div>
+
+        <h2 style="margin-top:14px">Practice (you do the work)</h2>
+        <p class="muted small" style="margin:0">Fill in each step, then click <strong>Check</strong>.</p>
+
+        <ol class="practice" aria-label="Practice steps">
+          <li>
+            <strong>Step 1 — Convert the IP to binary.</strong>
+            <span class="prompt muted small">Write each octet as 8 bits, separated by dots.</span>
+            <div class="inputs">
+              <input id="prac_ipbin" class="wide" type="text" placeholder="e.g., 11000000.10101000.00000001.01001011" />
+              <button id="prac_ipbin_btn" type="button">Check</button>
+            </div>
+            <div id="prac_ipbin_st" class="small statusLine muted">—</div>
+          </li>
+
+          <li>
+            <strong>Step 2 — Build the subnet mask (dotted decimal).</strong>
+            <span class="prompt muted small">Prefix = 1s then 0s. Convert that mask to decimal.</span>
+            <div class="inputs">
+              <input id="prac_maskbin" class="wide" type="text" placeholder="Mask (binary) e.g., 11111111.11111111.11111111.11000000" />
+              <input id="prac_mask" type="text" placeholder="e.g., 255.255.255.192" />
+              <button id="prac_mask_btn" type="button">Check</button>
+            </div>
+            <div id="prac_maskbin_st" class="small statusLine muted">—</div>
+            <div id="prac_mask_st" class="small statusLine muted">—</div>
+          </li>
+
+          <li>
+            <strong>Step 3 — Find the Network ID.</strong>
+            <span class="prompt muted small">Keep network bits the same. Flip everything past the wall to <span class="mono">0</span>.</span>
+            <div class="inputs">
+              <input id="prac_netbin" class="wide" type="text" placeholder="Network ID (binary) e.g., 11000000.10101000.00000001.01000000" />
+              <input id="prac_net" type="text" placeholder="e.g., 192.168.1.64" />
+              <button id="prac_net_btn" type="button">Check</button>
+            </div>
+            <div id="prac_netbin_st" class="small statusLine muted">—</div>
+            <div id="prac_net_st" class="small statusLine muted">—</div>
+          </li>
+
+          <li>
+            <strong>Step 4 — Find the Broadcast.</strong>
+            <span class="prompt muted small">Keep network bits the same. Flip everything past the wall to <span class="mono">1</span>.</span>
+            <div class="inputs">
+              <input id="prac_bcastbin" class="wide" type="text" placeholder="Broadcast (binary) e.g., 11000000.10101000.00000001.01111111" />
+              <input id="prac_bcast" type="text" placeholder="e.g., 192.168.1.127" />
+              <button id="prac_bcast_btn" type="button">Check</button>
+            </div>
+            <div id="prac_bcastbin_st" class="small statusLine muted">—</div>
+            <div id="prac_bcast_st" class="small statusLine muted">—</div>
+          </li>
+
+          <li>
+            <strong>Step 5 — Totals.</strong>
+            <span class="prompt muted small">Host bits = <span class="mono">32 − prefix</span>. Total = <span class="mono">2^(host bits)</span>. Usable = Total − 2.</span>
+            <div class="inputs">
+              <input id="prac_total" class="mini" type="text" placeholder="Total IPs" />
+              <input id="prac_usable" class="mini" type="text" placeholder="Usable" />
+              <button id="prac_totals_btn" type="button">Check</button>
+            </div>
+            <div id="prac_totals_st" class="small statusLine muted">—</div>
+          </li>
+
+          <li>
+            <strong>Step 6 — Next subnet.</strong>
+            <span class="prompt muted small">Next subnet = Network ID + block size (Total IPs).</span>
+            <div class="inputs">
+              <input id="prac_next" type="text" placeholder="e.g., 192.168.1.128" />
+              <button id="prac_next_btn" type="button">Check</button>
+            </div>
+            <div id="prac_next_st" class="small statusLine muted">—</div>
+          </li>
+        </ol>
+
+        <details style="margin-top:12px">
+          <summary>One fully worked example (reference): 192.168.1.75/26</summary>
+          <p class="muted small" style="margin-top:8px">Reference example to compare your process. Then use Practice for new problems.</p>
+          <div class="callout small">
+            <div><strong>Subnet mask:</strong> /26 = 26 ones then zeros</div>
+            <div class="mono">11111111.11111111.11111111.11<span class="wallText">|</span>000000</div>
+            <div class="mono">255.255.255.192</div>
+          </div>
+          <div class="callout small">
+            <div><strong>IP in binary:</strong></div>
+            <div class="mono">11000000.10101000.00000001.01<span class="wallText">|</span>001011</div>
+          </div>
+          <div class="callout small">
+            <div><strong>Network ID:</strong> 192.168.1.64</div>
+            <div><strong>Broadcast:</strong> 192.168.1.127</div>
+            <div><strong>Host bits:</strong> 32 − 26 = 6</div>
+            <div><strong>Total:</strong> 2^6 = 64 • <strong>Usable:</strong> 62</div>
+            <div><strong>Next subnet:</strong> 192.168.1.128</div>
+          </div>
+        </details>
+
+    </section>
+
+    <aside class="card">
+      <h2>Quick checks</h2>
+      <table aria-label="Quick check reminders">
+        <thead>
+          <tr>
+            <th>What you need</th>
+            <th>Wall method reminder</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Network ID</strong></td>
+            <td>Flip everything past the wall to <span class="mono">0</span>.</td>
+          </tr>
+          <tr>
+            <td><strong>Broadcast</strong></td>
+            <td>Flip everything past the wall to <span class="mono">1</span>.</td>
+          </tr>
+          <tr>
+            <td><strong>Total IPs</strong></td>
+            <td>Host bits = <span class="mono">32 − prefix</span>, then <span class="mono">2^(host bits)</span>.</td>
+          </tr>
+          <tr>
+            <td><strong>Usable Hosts</strong></td>
+            <td>Total − 2 (Network ID + Broadcast are reserved).</td>
+          </tr>
+          <tr>
+            <td><strong>Next Subnet</strong></td>
+            <td>Network ID + block size (same prefix).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:14px">Practice mode</h2>
+      <p class="muted small">Try these from the assignment. Click one to load it into the analyzer.</p>
+      <div class="row" style="gap:8px; margin-top:8px">
+        <button class="ex" data-ip="172.16.10.33" data-prefix="27">172.16.10.33/27</button>
+        <button class="ex" data-ip="10.0.4.200" data-prefix="20">10.0.4.200/20</button>
+        <button class="ex" data-ip="192.168.50.14" data-prefix="28">192.168.50.14/28</button>
+      </div>
+
+      <details style="margin-top:12px">
+        <summary>Common mistakes</summary>
+        <p><strong>Prefix confusion:</strong> <span class="mono">/26</span> means 26 network bits, not “26 hosts.”</p>
+        <p><strong>Binary grouping:</strong> keep octets as groups of 8 bits. The wall can split inside an octet.</p>
+        <p><strong>Next subnet:</strong> don’t add 1 to the IP address; add the <em>block size</em> to the <em>network ID</em>.</p>
+      </details>
+
+    </aside>
+  </main>
+
+  <div class="footer">
+    Built for CYB 301 • Use with the subnet analysis table and class slides.
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    let lastResult = null;
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function parseIPv4(ip){
+      const parts = ip.trim().split('.');
+      if(parts.length !== 4) return null;
+      const nums = parts.map(p => Number(p));
+      if(nums.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return null;
+      return nums;
+    }
+
+    function toBin8(n){
+      return n.toString(2).padStart(8, '0');
+    }
+
+    function bitsToIPv4(bits32){
+      const octets = [];
+      for(let i=0;i<32;i+=8){
+        const slice = bits32.slice(i,i+8);
+        octets.push(parseInt(slice, 2));
+      }
+      return octets.join('.');
+    }
+
+    function maskFromPrefix(prefix){
+      const p = clamp(prefix, 0, 32);
+      const bits = '1'.repeat(p) + '0'.repeat(32 - p);
+      return bits;
+    }
+
+    function normalizeIPv4String(s){
+      const nums = parseIPv4(s);
+      return nums ? nums.join('.') : null;
+    }
+
+    function parseBigIntStrict(s){
+      const t = String(s ?? '').trim();
+      if(!/^[0-9]+$/.test(t)) return null;
+      try{ return BigInt(t); }catch{ return null; }
+    }
+
+    function normalizeBinaryIPv4(s){
+      const t = String(s ?? '').trim().replaceAll(' ', '').replaceAll('|', '');
+      const parts = t.split('.');
+      if(parts.length !== 4) return null;
+      if(parts.some(p => p.length !== 8 || /[^01]/.test(p))) return null;
+      return parts.join('.');
+    }
+
+    function bits32ToDottedBinary(bits32){
+      return [bits32.slice(0,8), bits32.slice(8,16), bits32.slice(16,24), bits32.slice(24,32)].join('.');
+    }
+
+    function setStatus(el, ok, correctValue){
+      if(ok){
+        el.className = 'small statusLine good';
+        el.textContent = 'Correct';
+      } else {
+        el.className = 'small statusLine bad';
+        el.textContent = 'Try again.';
+      }
+    }
+
+    function resetStatus(el){
+      el.className = 'small statusLine muted';
+      el.textContent = '—';
+    }
+
+    function resetPracticeStatuses(){
+      ['prac_ipbin_st','prac_maskbin_st','prac_mask_st','prac_netbin_st','prac_net_st','prac_bcastbin_st','prac_bcast_st','prac_totals_st','prac_next_st'].forEach(id => {
+        const el = $(id);
+        if(el) resetStatus(el);
+      });
+    }
+
+    function checkPractice(){
+      if(!lastResult){
+        resetPracticeStatuses();
+        return;
+      }
+
+      const ipBinOk = normalizeBinaryIPv4($('prac_ipbin')?.value) === lastResult.ipBin;
+      setStatus($('prac_ipbin_st'), ipBinOk, lastResult.ipBin);
+
+      const maskBinOk = normalizeBinaryIPv4($('prac_maskbin')?.value) === lastResult.maskBin;
+      setStatus($('prac_maskbin_st'), maskBinOk, lastResult.maskBin);
+      const maskOk = normalizeIPv4String($('prac_mask')?.value) === lastResult.maskDec;
+      setStatus($('prac_mask_st'), maskOk, lastResult.maskDec);
+
+      const netBinOk = normalizeBinaryIPv4($('prac_netbin')?.value) === lastResult.netBin;
+      setStatus($('prac_netbin_st'), netBinOk, lastResult.netBin);
+      const netOk = normalizeIPv4String($('prac_net')?.value) === lastResult.netDec;
+      setStatus($('prac_net_st'), netOk, lastResult.netDec);
+
+      const bcastBinOk = normalizeBinaryIPv4($('prac_bcastbin')?.value) === lastResult.bcastBin;
+      setStatus($('prac_bcastbin_st'), bcastBinOk, lastResult.bcastBin);
+      const bcastOk = normalizeIPv4String($('prac_bcast')?.value) === lastResult.bcastDec;
+      setStatus($('prac_bcast_st'), bcastOk, lastResult.bcastDec);
+
+      const totalVal = parseBigIntStrict($('prac_total')?.value);
+      const usableVal = parseBigIntStrict($('prac_usable')?.value);
+      const totalOk = totalVal !== null && totalVal === lastResult.totalIPs;
+      const usableOk = usableVal !== null && usableVal === lastResult.usableHosts;
+      const totalsOk = totalOk && usableOk;
+      setStatus($('prac_totals_st'), totalsOk, `${lastResult.totalIPs.toString()} total, ${lastResult.usableHosts.toString()} usable`);
+
+      const nextOk = normalizeIPv4String($('prac_next')?.value) === lastResult.nextDec;
+      setStatus($('prac_next_st'), nextOk, lastResult.nextDec);
+    }
+
+    function formatBitsWithWallHtml(bits32, prefix){
+      const p = clamp(prefix, 0, 32);
+      let out = '';
+      for(let i=0;i<32;i++){
+        if(i>0 && i%8===0) out += '.';
+        if(i === p) out += '<span class="wallText">|</span>';
+        out += bits32[i];
+      }
+      if(p === 32) out += '<span class="wallText">|</span>';
+      return out;
+    }
+
+    function renderBits(containerEl, bits32, prefix){
+      containerEl.innerHTML = '';
+
+      const p = clamp(prefix, 0, 32);
+
+      if(p === 0){
+        const w = document.createElement('div');
+        w.className = 'wallSep mono';
+        w.textContent = '|';
+        w.title = `Wall at /${p}`;
+        containerEl.appendChild(w);
+      }
+
+      for(let i=0;i<32;i++){
+        if(i>0 && i%8===0){
+          const s = document.createElement('div');
+          s.className = 'sep mono';
+          s.textContent = '.';
+          containerEl.appendChild(s);
+        }
+
+        if(i === p && p !== 0){
+          const w = document.createElement('div');
+          w.className = 'wallSep mono';
+          w.textContent = '|';
+          w.title = `Wall at /${p}`;
+          containerEl.appendChild(w);
+        }
+
+        const b = document.createElement('div');
+        b.className = 'bit mono';
+        b.textContent = bits32[i];
+
+        // color coding
+        if(i < p) b.classList.add('net');
+        else b.classList.add('host');
+        if(i === p) b.classList.add('wall'); // first host bit (still highlighted)
+
+        containerEl.appendChild(b);
+      }
+
+      if(p === 32){
+        const w = document.createElement('div');
+        w.className = 'wallSep mono';
+        w.textContent = '|';
+        w.title = `Wall at /${p}`;
+        containerEl.appendChild(w);
+      }
+    }
+
+    function analyze(ipStr, prefixStr){
+      const ipNums = parseIPv4(ipStr);
+      let prefix = Number(prefixStr);
+      if(!Number.isInteger(prefix)) prefix = 0;
+      prefix = clamp(prefix, 0, 32);
+
+      if(!ipNums){
+        lastResult = null;
+        if($('checkTargetHelper')) $('checkTargetHelper').textContent = '—';
+        resetPracticeStatuses();
+        return;
+      }
+
+      const ipBits32 = ipNums.map(toBin8).join('');
+      const maskBits32 = maskFromPrefix(prefix);
+
+      // network id bits: keep prefix bits, set host bits to 0
+      const netBits32 = ipBits32.slice(0, prefix) + '0'.repeat(32 - prefix);
+      // broadcast bits: keep prefix bits, set host bits to 1
+      const bcastBits32 = ipBits32.slice(0, prefix) + '1'.repeat(32 - prefix);
+
+      const hostBits = 32 - prefix;
+
+      // totals (BigInt for safety, though max is 2^32)
+      const totalIPs = BigInt(1) << BigInt(hostBits);
+      const usableHosts = hostBits === 0 ? 0n : (totalIPs - 2n);
+
+      // next subnet = network id + block size (in integer form)
+      function bitsToInt(bits32){
+        return BigInt('0b' + bits32);
+      }
+      function intToBits32(x){
+        let s = x.toString(2);
+        if(s.length > 32) s = s.slice(-32); // wrap (rare, near end of space)
+        return s.padStart(32,'0');
+      }
+      const netInt = bitsToInt(netBits32);
+      const nextInt = netInt + totalIPs;
+      const nextBits32 = intToBits32(nextInt);
+
+      // dotted decimals
+      const maskDec = bitsToIPv4(maskBits32);
+      const netDec = bitsToIPv4(netBits32);
+      const bcastDec = bitsToIPv4(bcastBits32);
+      const nextDec = bitsToIPv4(nextBits32);
+
+      // (Optional) solution UI elements may not exist in teaching mode.
+      if($('maskDec')) $('maskDec').textContent = maskDec;
+      if($('netId')) $('netId').textContent = netDec;
+      if($('bcast')) $('bcast').textContent = bcastDec;
+      if($('total')) $('total').textContent = totalIPs.toString();
+      if($('usable')) $('usable').textContent = usableHosts.toString();
+      if($('next')) $('next').textContent = nextDec;
+      if($('ipDecLabel')) $('ipDecLabel').textContent = `${ipNums.join('.')} /${prefix}`;
+      if($('maskLabel')) $('maskLabel').textContent = `${maskDec}  (/${prefix})`;
+      if($('ipBits')) renderBits($('ipBits'), ipBits32, prefix);
+      if($('maskBits')) renderBits($('maskBits'), maskBits32, prefix);
+      if($('step_ip')) $('step_ip').textContent = `${ipNums.join('.')} /${prefix}`;
+      if($('step_ip_bin')) $('step_ip_bin').innerHTML = formatBitsWithWallHtml(ipBits32, prefix);
+      if($('step_mask_bin')) $('step_mask_bin').innerHTML = formatBitsWithWallHtml(maskBits32, prefix);
+      if($('step_mask_dec')) $('step_mask_dec').textContent = `Subnet mask (decimal): ${maskDec}`;
+      if($('step_net_bin')) $('step_net_bin').innerHTML = formatBitsWithWallHtml(netBits32, prefix);
+      if($('step_net_dec')) $('step_net_dec').textContent = `Network ID: ${netDec}`;
+      if($('step_bcast_bin')) $('step_bcast_bin').innerHTML = formatBitsWithWallHtml(bcastBits32, prefix);
+      if($('step_bcast_dec')) $('step_bcast_dec').textContent = `Broadcast: ${bcastDec}`;
+      if($('step_math')) $('step_math').textContent = `32 − ${prefix} = ${hostBits}; 2^${hostBits} = ${totalIPs.toString()}; usable = ${usableHosts.toString()}`;
+      if($('step_next')) $('step_next').textContent = `${netDec} + ${totalIPs.toString()} = ${nextDec}`;
+
+      lastResult = {
+        ip: ipNums.join('.'),
+        prefix,
+        maskDec,
+        netDec,
+        bcastDec,
+        nextDec,
+        totalIPs,
+        usableHosts,
+        ipBin: bits32ToDottedBinary(ipBits32),
+        maskBin: bits32ToDottedBinary(maskBits32),
+        netBin: bits32ToDottedBinary(netBits32),
+        bcastBin: bits32ToDottedBinary(bcastBits32),
+      };
+      if($('checkTargetHelper')) $('checkTargetHelper').textContent = `${lastResult.ip}/${lastResult.prefix}`;
+      resetPracticeStatuses();
+    }
+
+    $('prac_ipbin_btn').addEventListener('click', () => checkPractice());
+    $('prac_mask_btn').addEventListener('click', () => checkPractice());
+    $('prac_net_btn').addEventListener('click', () => checkPractice());
+    $('prac_bcast_btn').addEventListener('click', () => checkPractice());
+    $('prac_totals_btn').addEventListener('click', () => checkPractice());
+    $('prac_next_btn').addEventListener('click', () => checkPractice());
+
+    $('btn').addEventListener('click', () => analyze($('ip').value, $('prefix').value));
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') analyze($('ip').value, $('prefix').value);
+    });
+
+    document.querySelectorAll('.ex').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $('ip').value = btn.dataset.ip;
+        $('prefix').value = btn.dataset.prefix;
+        analyze($('ip').value, $('prefix').value);
+      });
+    });
+
+    // initial
+    analyze($('ip').value, $('prefix').value);
+  </script>
+</body>
+</html>
