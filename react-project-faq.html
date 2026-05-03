@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yapper Project FAQ</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --border: #e5e7eb;
+      --green: #ecfdf5;
+      --yellow: #fffbeb;
+      --purple: #f5f3ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f8fafc;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.32), transparent 35%),
+        linear-gradient(135deg, #0f172a, #111827);
+      color: white;
+      padding: 42px 18px;
+    }
+
+    .wrap {
+      width: min(1050px, 100%);
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      color: #cbd5e1;
+      font-size: 1.08rem;
+      margin: 0;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+      margin-top: 24px;
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search::placeholder { color: #cbd5e1; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .chip.active {
+      background: white;
+      color: #111827;
+    }
+
+    main {
+      padding: 26px 18px 40px;
+    }
+
+    .note {
+      background: var(--accent-soft);
+      border: 1px solid #bfdbfe;
+      border-left: 6px solid var(--accent);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .faq {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .faq[hidden] { display: none; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.78rem;
+      font-weight: 750;
+      background: #eef2ff;
+      color: #3730a3;
+      margin-bottom: 9px;
+    }
+
+    .faq h2 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      line-height: 1.25;
+    }
+
+    .faq p { margin: 0 0 10px; }
+
+    .faq p:last-child { margin-bottom: 0; }
+
+    code {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    .quick {
+      margin: 26px 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .mini {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .mini:nth-child(1) { background: var(--green); }
+    .mini:nth-child(2) { background: var(--yellow); }
+    .mini:nth-child(3) { background: var(--purple); }
+
+    .mini h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .section-title {
+      margin: 32px 0 12px;
+      font-size: 1.7rem;
+      letter-spacing: -0.025em;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .art-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .art-frame {
+      aspect-ratio: 4 / 3;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(168, 85, 247, 0.12)),
+        #f8fafc;
+      border-bottom: 1px solid var(--border);
+      color: #64748b;
+      text-align: center;
+      padding: 16px;
+      font-weight: 750;
+    }
+
+    .art-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      padding: 0;
+    }
+
+    .art-caption {
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      color: #4b5563;
+    }
+
+    .empty {
+      display: none;
+      background: white;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      color: #64748b;
+      margin-top: 14px;
+    }
+
+    footer {
+      color: #64748b;
+      padding: 20px 18px 36px;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <h1>Yapper Project FAQ</h1>
+      <p class="subtitle">Questions from our sticky-note check-in, cleaned up and answered in one place. Use the search bar to find topics like GitHub, TSX, Chakra UI, Vite, input, hosting, and security.</p>
+      <div class="toolbar">
+        <input id="search" class="search" type="search" placeholder="Search the FAQ..." aria-label="Search FAQ" />
+        <div class="chips" aria-label="Filter FAQ by category">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="React">React / TSX</button>
+          <button class="chip" data-filter="Tools">Tools</button>
+          <button class="chip" data-filter="GitHub">GitHub</button>
+          <button class="chip" data-filter="Design">Design</button>
+          <button class="chip" data-filter="Security">Security</button>
+          <button class="chip" data-filter="Fun">Fun</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="note">
+      <strong>Big idea:</strong> This project is not just about making a Twitter-style page. It is about learning how modern web apps are organized: local files, reusable components, styling tools, data, GitHub, and eventually cloud hosting.
+    </div>
+
+    <section class="quick" aria-label="Quick project summary">
+      <article class="mini">
+        <h2>Vite</h2>
+        <p>Vite gives us a fast React development environment. It starts the local website with <code>npm run dev</code> and updates the browser as we edit.</p>
+      </article>
+      <article class="mini">
+        <h2>React + TSX</h2>
+        <p>React lets us build pages out of components. A <code>.tsx</code> file lets us write TypeScript logic and JSX UI in the same component file.</p>
+      </article>
+      <article class="mini">
+        <h2>Chakra UI</h2>
+        <p>Chakra gives us ready-made components like <code>Box</code>, <code>Text</code>, <code>Button</code>, and <code>Input</code> so styling is easier.</p>
+      </article>
+    </section>
+
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div id="faqGrid" class="grid">
+
+      <article class="faq" data-category="Design" data-keywords="moderation twitter posts bad content">
+        <span class="tag">Design</span>
+        <h2>Will this have better moderation than Twitter?</h2>
+        <p>At first, probably not. Early versions of apps are usually simple and fragile.</p>
+        <p>That is why moderation is an important design problem. If users can post content, we eventually need rules, reporting, filtering, and consequences for misuse.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="file types tsx css html javascript typescript">
+        <span class="tag">React / TSX</span>
+        <h2>How do different file types affect the code?</h2>
+        <p>Different file types tell the tools how to read the file. <code>.html</code> is page structure, <code>.css</code> is styling, <code>.js</code> is JavaScript, and <code>.ts</code> is TypeScript.</p>
+        <p>A <code>.tsx</code> file is special because it can contain TypeScript logic and JSX, which looks like HTML but is actually used by React to build the page.</p>
+      </article>
+
+      <article class="faq" data-category="GitHub" data-keywords="github repo repository commit push cloud save">
+        <span class="tag">GitHub</span>
+        <h2>How does GitHub actually work?</h2>
+        <p>Think of GitHub like cloud storage for code, but with a history of every important save point.</p>
+        <p>You save files on your computer first. Then you <strong>commit</strong> changes to create a checkpoint. After that, you <strong>push</strong> the checkpoint to GitHub so it is backed up online.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="twitter format background style">
+        <span class="tag">Design</span>
+        <h2>Is only the format going to look like Twitter, or the whole background?</h2>
+        <p>The first goal is the layout: a feed, posts, and repeated cards.</p>
+        <p>After the core functionality works, you can customize colors, backgrounds, spacing, and style. Make it yours, but keep it readable.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="overview system vite chakra json diagram">
+        <span class="tag">Tools</span>
+        <h2>What is the overview of the system?</h2>
+        <p>Right now, the browser loads a Vite React app. React renders components, Chakra UI helps style them, and our starter data may live in code or JSON files.</p>
+        <p>Later, the app can send and receive data from an API so posts are saved somewhere outside the browser.</p>
+      </article>
+
+      <article class="faq" data-category="Fun" data-keywords="tutoring help after school club">
+        <span class="tag">Class</span>
+        <h2>Can I have tutoring?</h2>
+        <p>Yes. After school or club time is usually the best time to get extra help, debug setup problems, or review React concepts more slowly.</p>
+      </article>
+
+      <article class="faq" data-category="Fun" data-keywords="dominic fike malcolm todd music">
+        <span class="tag">Fun</span>
+        <h2>Dominic Fike or Malcolm Todd?</h2>
+        <p>After a listening session, I am voting for Malcolm Todd. The jazz influence wins this round.</p>
+      </article>
+
+      <article class="faq" data-category="Fun" data-keywords="mr speak mr six russian">
+        <span class="tag">Fun</span>
+        <h2>Is Mr. Speak better than Mr. Six?</h2>
+        <p>Да ладно, Шестой — просто лучший!</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="map array loop render repeat tweets">
+        <span class="tag">React / TSX</span>
+        <h2>What is <code>.map()</code>?</h2>
+        <p><code>.map()</code> is a JavaScript array method that creates a new version of each item in a list.</p>
+        <p>In React, we use it to repeat UI. For example, if we have 5 posts in an array, <code>.map()</code> can create 5 post cards on the page.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="user input base card format yap button json">
+        <span class="tag">React / TSX</span>
+        <h2>How are we going to accept user input into a base card format?</h2>
+        <p>We will use form tools like <code>Input</code> and <code>Button</code>. When the user types a post and clicks “Yap,” the app will collect that text.</p>
+        <p>Eventually, we need to save that post somewhere. A simple next step is JSON-style data. A more complete version would send the post to an API or database.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="chakra building app components ui">
+        <span class="tag">Tools</span>
+        <h2>How does Chakra help us build the app?</h2>
+        <p>Chakra UI gives us pre-built React components. Instead of writing every <code>div</code>, button, input, and style from scratch, we can use components like <code>Box</code>, <code>Button</code>, <code>Input</code>, and <code>VStack</code>.</p>
+        <p>It does not replace React. It helps us build React interfaces faster.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="simple way html css react">
+        <span class="tag">React / TSX</span>
+        <h2>Can I do this in a much simpler way?</h2>
+        <p>Yes, a basic HTML and CSS page can be simpler at first.</p>
+        <p>However, React helps when an app becomes interactive, has repeated UI, uses components, or changes data without rebuilding the whole page. Stick with the new tool long enough for the pattern to click.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="extra files explorer eslint config package vite">
+        <span class="tag">Tools</span>
+        <h2>What is all the extra code in the file explorer, like <code>eslint.config</code>?</h2>
+        <p>A Vite project includes setup files so the app can run, check code, manage packages, and build for the web.</p>
+        <p>You do not need to understand every file immediately. For now, focus on <code>src/main.tsx</code>, <code>src/App.tsx</code>, and <code>package.json</code>.</p>
+      </article>
+
+      <article class="faq" data-category="Fun" data-keywords="how are you summer">
+        <span class="tag">Fun</span>
+        <h2>How are you?</h2>
+        <p>I am doing good and very excited for summer. How are you?</p>
+      </article>
+
+      <article class="faq" data-category="GitHub" data-keywords="repo repository">
+        <span class="tag">GitHub</span>
+        <h2>What is a repo?</h2>
+        <p><strong>Repo</strong> is short for <strong>repository</strong>. It is the project folder Git tracks.</p>
+        <p>A repo usually contains your code, project files, commit history, and a connection to GitHub.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="ai websites learn code">
+        <span class="tag">Design</span>
+        <h2>Is there a benefit to learning web development when AI can make websites?</h2>
+        <p>Yes. AI is much more useful when you understand what it is creating.</p>
+        <p>If you know React, files, components, and errors, you can ask better questions, catch bad AI code, remove unnecessary code, and fix the app when something breaks.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="functions different file component split">
+        <span class="tag">React / TSX</span>
+        <h2>Are we going to move functions into different files?</h2>
+        <p>Yes. That is one of the main reasons we use React.</p>
+        <p>Once the tweet card works, we can move it into its own component file. Smaller files are easier to read, test, reuse, and debug.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="tsx interpret js html jsx">
+        <span class="tag">React / TSX</span>
+        <h2>How does TSX interpret JavaScript and HTML?</h2>
+        <p>TSX does not use real HTML inside the component. It uses <strong>JSX</strong>, which looks like HTML but gets turned into JavaScript that React understands.</p>
+        <p>Inside JSX, curly braces like <code>{tweet.name}</code> let us jump back into JavaScript and display values.</p>
+      </article>
+
+      <article class="faq" data-category="Security" data-keywords="malicious xss user input cyber">
+        <span class="tag">Security</span>
+        <h2>How could this code be used for malicious purposes?</h2>
+        <p>Any app that displays user input has security risks.</p>
+        <p>One example is cross-site scripting, or XSS. That happens when a user tries to submit code instead of normal text and the website accidentally runs it. We need to treat user input carefully and protect the app before it goes public.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="use app in class publish classmates">
+        <span class="tag">Design</span>
+        <h2>Will we use this app in class?</h2>
+        <p>Yes. The goal is for each student to publish a working web app so classmates can visit it and see what you built.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="colorful chakra styling">
+        <span class="tag">Design</span>
+        <h2>How do I make it colorful?</h2>
+        <p>Use Chakra styling props such as <code>bg</code>, <code>color</code>, <code>borderColor</code>, <code>p</code>, <code>borderRadius</code>, and <code>boxShadow</code>.</p>
+        <p>Start small: change the page background, card background, text color, and button color.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="locally hosted network accessible cloud github pages hosting">
+        <span class="tag">Tools</span>
+        <h2>How will we get this website from local hosting to a network-accessible website?</h2>
+        <p>Right now, <code>npm run dev</code> runs the app on your computer for development.</p>
+        <p>To make it public, we need to deploy it to a hosting provider. GitHub Pages can host static sites, but if we want to save new posts, we will eventually need a backend or database service too.</p>
+      </article>
+
+      <article class="faq" data-category="GitHub" data-keywords="connect vs code github folder">
+        <span class="tag">GitHub</span>
+        <h2>How do I connect VS Code to GitHub?</h2>
+        <p>Open the correct project folder in VS Code first. Then check whether the Source Control panel sees your repo.</p>
+        <p>If VS Code is not connected, the project folder may not be the same folder you cloned from GitHub, or Git may not be initialized there yet.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="chakra vite give us">
+        <span class="tag">Tools</span>
+        <h2>What do Chakra and Vite actually give us?</h2>
+        <p><strong>Vite</strong> gives us the development server and build tools for a modern React project.</p>
+        <p><strong>Chakra UI</strong> gives us reusable visual components so we can style faster without writing every CSS rule manually.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="website not break change code errors react">
+        <span class="tag">React / TSX</span>
+        <h2>Why does the website not instantly break if I change something?</h2>
+        <p>Some changes are harmless, and React can keep showing the last working version while tools report an error.</p>
+        <p>Other changes will break the app immediately. The browser console and terminal are your best places to look when something seems wrong.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="make yapper file classwork">
+        <span class="tag">Tools</span>
+        <h2>How do I make the Yapper file in the first place?</h2>
+        <p>Start from the setup assignment. You need the Vite React project created first, then you edit files like <code>src/App.tsx</code>.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="codehs systems websites">
+        <span class="tag">Tools</span>
+        <h2>How does CodeHS use systems like this to make websites?</h2>
+        <p>Platforms like CodeHS often hide many setup details so students can focus on code.</p>
+        <p>With Vite and GitHub, we are seeing more of the real project structure professional developers use.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="update without reloading state rerender">
+        <span class="tag">React / TSX</span>
+        <h2>Are we going to make the website update without reloading?</h2>
+        <p>Yes. React can update part of the page when data changes.</p>
+        <p>For example, when a user submits a new post, we can update the list of posts and React can re-render the feed without refreshing the whole browser page.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="code run without refreshed virtual dom hmr">
+        <span class="tag">React / TSX</span>
+        <h2>How does the code run without having to refresh?</h2>
+        <p>During development, Vite watches your files. When you save, it sends updates to the browser.</p>
+        <p>React also uses a virtual representation of the page to figure out what needs to change instead of rebuilding everything from scratch.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="tsx file">
+        <span class="tag">React / TSX</span>
+        <h2>What is a TSX file?</h2>
+        <p>A <code>.tsx</code> file is a TypeScript React file.</p>
+        <p>It lets us write component logic and JSX in the same place. The logic usually goes before <code>return</code>, and the UI usually goes inside <code>return</code>.</p>
+      </article>
+
+      <article class="faq" data-category="Fun" data-keywords="bread bowl soup sandwich">
+        <span class="tag">Fun</span>
+        <h2>Is bread bowl soup a sandwich?</h2>
+        <p>Yes. As a certified classroom sandwich expert, I will allow it.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="large amounts data server cloud solutions">
+        <span class="tag">Tools</span>
+        <h2>How do websites manage large amounts of data without their own server?</h2>
+        <p>Many websites use cloud services instead of owning physical servers.</p>
+        <p>Examples include hosted databases, serverless functions, authentication providers, and storage services. The main idea is that another company runs the infrastructure, and your app connects to it securely.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="add new user input form state">
+        <span class="tag">React / TSX</span>
+        <h2>How do we add new user input?</h2>
+        <p>We will use form components, probably an <code>Input</code> or <code>Textarea</code>, and store what the user typed in React state.</p>
+        <p>Then the “Yap” button can add that new post to the list or send it to a backend later.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="badge avatar profile picture initials">
+        <span class="tag">Tools</span>
+        <h2>What does Badge do?</h2>
+        <p>A Chakra <code>Badge</code> is a small label, often used for categories, statuses, or tags.</p>
+        <p>For profile pictures or initials, Chakra also has avatar-related components. Badges and avatars are different UI pieces, but both help make a post card easier to scan.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="chakra ui application react library npm">
+        <span class="tag">Tools</span>
+        <h2>Is Chakra UI an application from the React library?</h2>
+        <p>Chakra UI is not built into React. It is a separate package we install with npm.</p>
+        <p>React gives us the component system. Chakra gives us a library of styled components that work inside React.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="multiple files one line big chunk organized reusable errors">
+        <span class="tag">React / TSX</span>
+        <h2>Why make multiple files instead of keeping one big file?</h2>
+        <p>One big file may feel easier at first, but it becomes hard to read and debug.</p>
+        <p>Smaller files let us separate responsibilities. A <code>TweetCard</code> file can focus only on showing one post, while <code>App.tsx</code> can focus on the whole page.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="long term project help">
+        <span class="tag">Design</span>
+        <h2>How will this help us long-term as we keep working on the project?</h2>
+        <p>You have already finished some of the hardest setup steps: creating the project, running it locally, editing TSX, and connecting to GitHub.</p>
+        <p>Those skills transfer to many modern web projects, not just this one.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="npm run dev what is it">
+        <span class="tag">Tools</span>
+        <h2>Why do we run <code>npm run dev</code>? What is it?</h2>
+        <p><code>npm run dev</code> starts the local development server.</p>
+        <p>It reads the project scripts in <code>package.json</code>, launches Vite, and gives you a local address where you can preview the app in the browser.</p>
+      </article>
+
+      <article class="faq" data-category="React" data-keywords="default keyword export functions">
+        <span class="tag">React / TSX</span>
+        <h2>What is the purpose of the <code>default</code> keyword when exporting functions?</h2>
+        <p><code>export default</code> marks one main thing that a file exports.</p>
+        <p>For example, <code>export default App</code> means another file can import the main App component without using curly braces.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="other people see my posts public cloud">
+        <span class="tag">Design</span>
+        <h2>Will other people be able to see my posts?</h2>
+        <p>Once the site is published online, other people can visit your website.</p>
+        <p>For classmates to see live posts that were added later, the app also needs a place to save and load those posts.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="endpoints api get posts new posts">
+        <span class="tag">Tools</span>
+        <h2>Are we going to build other endpoints?</h2>
+        <p>Eventually, yes. If we build a backend, we would likely need one endpoint to get posts and another endpoint to create new posts.</p>
+        <p>That is how the frontend and backend communicate.</p>
+      </article>
+
+      <article class="faq" data-category="Design" data-keywords="css chakra styling props">
+        <span class="tag">Design</span>
+        <h2>How does CSS work with Chakra?</h2>
+        <p>Chakra lets us write many styles as component props.</p>
+        <p>For example, <code>&lt;Box bg="gray.800" p={4} borderRadius="lg"&gt;</code> is styling the box without writing a separate CSS file.</p>
+      </article>
+
+      <article class="faq" data-category="Tools" data-keywords="run button disappearing vscode play button react python">
+        <span class="tag">Tools</span>
+        <h2>Why does my Run button keep disappearing?</h2>
+        <p>VS Code shows a Run button for some single files, like Python files.</p>
+        <p>A React app is a full project, not one file you run by itself. Use the terminal command <code>npm run dev</code> from the project folder instead.</p>
+      </article>
+
+    </div>
+
+    <div id="empty" class="empty">No matching questions yet. Try a different search term or category.</div>
+
+    <h2 class="section-title">Sticky Note Art Gallery</h2>
+    <div class="note">
+      Add student artwork by placing image files in your GitHub Pages project and replacing the placeholder boxes below with <code>&lt;img src="images/art-1.jpg" alt="Student sticky note art"&gt;</code>.
+    </div>
+
+    <section class="gallery" aria-label="Student art gallery">
+      <article class="art-card">
+        <div class="art-frame">Artwork 1<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 2<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 3<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 4<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 5<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 6<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 7<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+      <article class="art-card">
+        <div class="art-frame">Artwork 8<br>Replace with image</div>
+        <div class="art-caption">Student sticky-note art</div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    Built from class questions about the Yapper React project.
+  </footer>
+
+  <script>
+    const search = document.querySelector("#search");
+    const cards = Array.from(document.querySelectorAll(".faq"));
+    const chips = Array.from(document.querySelectorAll(".chip"));
+    const empty = document.querySelector("#empty");
+    let activeFilter = "all";
+
+    function normalize(value) {
+      return value.toLowerCase().trim();
+    }
+
+    function applyFilters() {
+      const query = normalize(search.value);
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const category = card.dataset.category;
+        const text = normalize(card.innerText + " " + (card.dataset.keywords || ""));
+        const matchesCategory = activeFilter === "all" || category === activeFilter;
+        const matchesSearch = !query || text.includes(query);
+        const shouldShow = matchesCategory && matchesSearch;
+
+        card.hidden = !shouldShow;
+        if (shouldShow) visibleCount += 1;
+      });
+
+      empty.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    search.addEventListener("input", applyFilters);
+
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeFilter = chip.dataset.filter;
+        applyFilters();
+      });
+    });
+  </script>
+</body>
+</html>
